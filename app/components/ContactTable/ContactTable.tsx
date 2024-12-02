@@ -48,7 +48,7 @@ export default function Table<T extends object>({
         <tbody>
           {paginatedData.map((row, rowIndex) => (
             <tr
-              key={row.id}
+              key={rowIndex}
               className={`${
                 rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"
               } hover:bg-gray-100`}

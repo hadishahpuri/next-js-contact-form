@@ -7,20 +7,37 @@ import contactsData from "./mock/contacts.json" with { type: "json" };
 
 export default function ContactPage() {
   const [nameSearchTerm, setNameSearchTerm] = useState("");
-  const [streetSearchTerm, setStreetSearchTerm] = useState("");
+  const [lastNameSearchTerm, setLastNameSearchTerm] = useState("");
+  const [emailSearchTerm, setEmailSearchTerm] = useState("");
+  const [phoneNumberSearchTerm, setPhoneNumberSearchTerm] = useState("");
+  const [birthDateSearchTerm, setBirthDateSearchTerm] = useState("");
   const [citySearchTerm, setCitySearchTerm] = useState("");
   const [stateSearchTerm, setStateSearchTerm] = useState("");
+  const [zipCodeSearchTerm, setZipCodeSearchTerm] = useState("");
+  const [streetSearchTerm, setStreetSearchTerm] = useState("");
   const [contacts, setContacts] = useState(contactsData);
 
-  const handleSearch = (term: string) => {
-    setNameSearchTerm(term);
-  };
-
-  const filteredContacts = contacts.filter((contact) =>
-    contact.firstName.toLowerCase().includes(nameSearchTerm.toLowerCase()),
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.firstName.toLowerCase().includes(nameSearchTerm.toLowerCase()) &&
+      contact.lastName
+        .toLowerCase()
+        .includes(lastNameSearchTerm.toLowerCase()) &&
+      contact.email.toLowerCase().includes(emailSearchTerm.toLowerCase()) &&
+      contact.phoneNumber
+        .toLowerCase()
+        .includes(phoneNumberSearchTerm.toLowerCase()) &&
+      contact.birthDate.includes(birthDateSearchTerm) &&
+      contact.city.toLowerCase().includes(citySearchTerm.toLowerCase()) &&
+      contact.state.toLowerCase().includes(stateSearchTerm.toLowerCase()) &&
+      contact.zipCode.toLowerCase().includes(zipCodeSearchTerm.toLowerCase()) &&
+      contact.streetAddress
+        .toLowerCase()
+        .includes(streetSearchTerm.toLowerCase()),
   );
 
   const columns = [
+    { header: "ID", accessor: "id" },
     { header: "First Name", accessor: "firstName" },
     { header: "Last Name", accessor: "lastName" },
     { header: "Email", accessor: "email" },
@@ -35,10 +52,26 @@ export default function ContactPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Contact Management</h1>
-      <ContactForm
-        onAdd={(newContact) => setContacts([...contactsData, newContact])}
+      <SearchForm
+        nameSearchTerm={nameSearchTerm}
+        setNameSearchTerm={setNameSearchTerm}
+        lastNameSearchTerm={lastNameSearchTerm}
+        setLastNameSearchTerm={setLastNameSearchTerm}
+        emailSearchTerm={emailSearchTerm}
+        setEmailSearchTerm={setEmailSearchTerm}
+        phoneNumberSearchTerm={phoneNumberSearchTerm}
+        setPhoneNumberSearchTerm={setPhoneNumberSearchTerm}
+        birthDateSearchTerm={birthDateSearchTerm}
+        setBirthDateSearchTerm={setBirthDateSearchTerm}
+        citySearchTerm={citySearchTerm}
+        setCitySearchTerm={setCitySearchTerm}
+        stateSearchTerm={stateSearchTerm}
+        setStateSearchTerm={setStateSearchTerm}
+        zipCodeSearchTerm={zipCodeSearchTerm}
+        setZipCodeSearchTerm={setZipCodeSearchTerm}
+        streetSearchTerm={streetSearchTerm}
+        setStreetSearchTerm={setStreetSearchTerm}
       />
-      <SearchForm onSearch={handleSearch} />
       <ContactTable columns={columns} data={filteredContacts} />
     </div>
   );
