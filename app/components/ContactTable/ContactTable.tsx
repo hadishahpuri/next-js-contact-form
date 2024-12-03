@@ -1,20 +1,24 @@
+import { Contact } from "@/app/types/contact";
 import React, { useState } from "react";
 
 type TableColumn = {
   header: string;
   accessor: string;
+  unique?: boolean;
 };
 
 type TableProps<T> = {
   columns: TableColumn[];
   data: T[];
   rowsPerPage?: number;
+  onEdit?: (data: Contact) => void;
 };
 
 export default function Table<T extends object>({
   columns,
   data,
   rowsPerPage = 10,
+  onEdit = undefined,
 }: TableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -31,6 +35,10 @@ export default function Table<T extends object>({
 
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handleOnEdit = (contact: Contact) => {
+    onEdit?.(contact);
   };
 
   return (
@@ -63,6 +71,11 @@ export default function Table<T extends object>({
                   }
                 </td>
               ))}
+              <td>
+                <button onClick={() => handleOnEdit(row as Contact)}>
+                  Edit
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
