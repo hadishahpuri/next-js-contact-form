@@ -1,40 +1,41 @@
 "use client";
-import React, { useState } from "react";
-import ContactForm from "./components/ContactForm/ContactForm";
+import React, { useEffect, useState } from "react";
 import ContactTable from "./components/ContactTable/ContactTable";
 import SearchForm from "./components/ContactTable/SearchForm";
 import contactsData from "./mock/contacts.json" with { type: "json" };
+import { Contact, Filters } from "./types/contact";
 
 export default function ContactPage() {
-  const [nameSearchTerm, setNameSearchTerm] = useState("");
-  const [lastNameSearchTerm, setLastNameSearchTerm] = useState("");
-  const [emailSearchTerm, setEmailSearchTerm] = useState("");
-  const [phoneNumberSearchTerm, setPhoneNumberSearchTerm] = useState("");
-  const [birthDateSearchTerm, setBirthDateSearchTerm] = useState("");
-  const [citySearchTerm, setCitySearchTerm] = useState("");
-  const [stateSearchTerm, setStateSearchTerm] = useState("");
-  const [zipCodeSearchTerm, setZipCodeSearchTerm] = useState("");
-  const [streetSearchTerm, setStreetSearchTerm] = useState("");
-  const [contacts, setContacts] = useState(contactsData);
+  const [searchFilters, setSearchFilters] = useState<Filters>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    birthDate: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    streetAddress: "",
+  });
+  const [contacts, setContacts] = useState<Contact[]>(contactsData);
 
-  const filteredContacts = contacts.filter(
-    (contact) =>
-      contact.firstName.toLowerCase().includes(nameSearchTerm.toLowerCase()) &&
-      contact.lastName
-        .toLowerCase()
-        .includes(lastNameSearchTerm.toLowerCase()) &&
-      contact.email.toLowerCase().includes(emailSearchTerm.toLowerCase()) &&
-      contact.phoneNumber
-        .toLowerCase()
-        .includes(phoneNumberSearchTerm.toLowerCase()) &&
-      contact.birthDate.includes(birthDateSearchTerm) &&
-      contact.city.toLowerCase().includes(citySearchTerm.toLowerCase()) &&
-      contact.state.toLowerCase().includes(stateSearchTerm.toLowerCase()) &&
-      contact.zipCode.toLowerCase().includes(zipCodeSearchTerm.toLowerCase()) &&
-      contact.streetAddress
-        .toLowerCase()
-        .includes(streetSearchTerm.toLowerCase()),
-  );
+  const handleSearch = () => {
+    const filtered = contacts.filter((contact) =>
+      Object.entries(searchFilters).every(([key, value]) =>
+        value
+          ? contact[key as keyof Contact]
+              ?.toString()
+              .toLowerCase()
+              .includes(value.toLowerCase())
+          : true,
+      ),
+    );
+    setContacts(filtered);
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchFilters]);
 
   const columns = [
     { header: "ID", accessor: "id" },
@@ -53,26 +54,10 @@ export default function ContactPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Contact Management</h1>
       <SearchForm
-        nameSearchTerm={nameSearchTerm}
-        setNameSearchTerm={setNameSearchTerm}
-        lastNameSearchTerm={lastNameSearchTerm}
-        setLastNameSearchTerm={setLastNameSearchTerm}
-        emailSearchTerm={emailSearchTerm}
-        setEmailSearchTerm={setEmailSearchTerm}
-        phoneNumberSearchTerm={phoneNumberSearchTerm}
-        setPhoneNumberSearchTerm={setPhoneNumberSearchTerm}
-        birthDateSearchTerm={birthDateSearchTerm}
-        setBirthDateSearchTerm={setBirthDateSearchTerm}
-        citySearchTerm={citySearchTerm}
-        setCitySearchTerm={setCitySearchTerm}
-        stateSearchTerm={stateSearchTerm}
-        setStateSearchTerm={setStateSearchTerm}
-        zipCodeSearchTerm={zipCodeSearchTerm}
-        setZipCodeSearchTerm={setZipCodeSearchTerm}
-        streetSearchTerm={streetSearchTerm}
-        setStreetSearchTerm={setStreetSearchTerm}
+        searchFilters={searchFilters}
+        setSearchFilters={setSearchFilters}
       />
-      <ContactTable columns={columns} data={filteredContacts} />
+      <ContactTable columns={columns} data={contacts} />
     </div>
   );
 }

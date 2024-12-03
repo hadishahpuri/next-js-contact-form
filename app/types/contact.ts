@@ -1,6 +1,7 @@
 export type Contact = {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phoneNumber: string;
   birthDate: string;
@@ -8,4 +9,8 @@ export type Contact = {
   state: string;
   zipCode: string;
   streetAddress: string;
+};
+
+export type Filters = {
+  [k in keyof Contact]?: string;
 };
