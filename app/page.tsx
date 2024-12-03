@@ -20,14 +20,20 @@ export default function ContactPage() {
     zipCode: "",
     streetAddress: "",
   });
-  const [contacts, setContacts] = useState<Contact[]>(contactsData);
+  const [allContacts, setAllContacts] = useState<Contact[]>(contactsData);
+  const [contacts, setContacts] = useState<Contact[]>(allContacts);
   const [selectedContact, setSelectedContact] = useState<Contact | undefined>(
     undefined,
   );
 
   const updateContact = (contact: Contact) => {
-    setContacts((prevContacts) =>
-      prevContacts.map((item) =>
+    setAllContacts(() =>
+      allContacts.map((item) =>
+        item.id == contact.id ? { ...item, ...contact } : item,
+      ),
+    );
+    setContacts(() =>
+      contacts.map((item) =>
         item.id == contact.id ? { ...item, ...contact } : item,
       ),
     );
@@ -44,7 +50,7 @@ export default function ContactPage() {
   };
 
   const handleSearch = () => {
-    const filtered = contacts.filter((contact) =>
+    const filtered = allContacts.filter((contact) =>
       Object.entries(searchFilters).every(([key, value]) =>
         value
           ? contact[key as keyof Contact]
